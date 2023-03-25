@@ -69,6 +69,19 @@ class Graph{
     }
 };
 
+const createHTMLBoard = size => {
+    const boardContainer = document.querySelector('.board');
+    boardContainer.style.cssText = `grid-template-columns: repeat(8, 80px); grid-auto-rows: 80px;`;
+    let counter = 7;
+    while(!!(size--)){
+        const el = document.createElement("div");
+        if(counter === -1) counter = 7;
+        el.setAttribute('data-cords', `${counter},${parseInt(size/8)}`);
+        counter--;
+        boardContainer.appendChild(el).style.backgroundColor = parseInt((size / 8) + size) % 2 == 0 ? '#ababab' : 'white';
+    }
+};
+
 
 
 const init = (() => {
