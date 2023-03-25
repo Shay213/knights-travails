@@ -46,7 +46,30 @@ class Graph{
     }
     //bfs
 
-}
+    dfs(startNode, destinationNode){
+        const visited = [];
+        const result = [];
+        const adjacencyList = this.adjacencyList;
+        const isVisited = node => visited.find(el => sameArr(node, el)); 
+        (function dfsRecursive(node){   
+            if(!node) return null;
+            visited.push(node);
+            result.push(node);
+            return adjacencyList.forEach(el => {
+                if(sameArr(el[0], node)){
+                    el[1][0].forEach(el2 => {
+                        if(!isVisited(el2))
+                            dfsRecursive(el2);
+                    });
+                }
+            });
+        })(startNode);
+
+        return result;
+    }
+};
+
+
 
 const init = (() => {
     createHTMLBoard(64);
