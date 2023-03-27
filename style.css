@@ -14,22 +14,79 @@ body{
     align-items: center;
 }
 
-.container > .text > h1{
+.container > div:first-of-type{
+    margin-left: 35px;
+}
+
+.container > div:first-of-type > h1{
     color: #eeeeee;
     font-size: 1.5rem;
     margin: 10px 0;
 }
 
-.container > .text > p{
-    color: #eeeeee;
-    margin: 5px 0;
-    font-size: 1.3rem;
+.container > div:first-of-type button{
+    font-size: .9rem;
+    cursor: pointer;
+    border: none;
+    background-color: #fff;
+    position: relative;
+}
+
+.container > div:first-of-type button.active::after{
+    content: '';
+    width: 24px;
+    height: 24px;
+    background: url('arrow-up-svgrepo-com.svg');
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    font-size: 1.5rem;
 }
 
 .board{
     display: grid;
-    margin-top: 15px;
+    position: relative;
 }
+
+.board .line{
+    width: 80px; 
+    height: 10px; 
+    background-color: yellow;
+    position: absolute;
+    transform-origin: top left;
+}
+
 .board > div{
     cursor: pointer;
+}
+
+.container .flex-container{
+    display: flex;
+    margin-top: 25px;
+}
+
+.container .flex-container .col-cords > div{
+    height: 80px;
+    width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 1.8rem;
+}
+
+.container .row-cords{
+    display: flex;
+    margin-left: 35px;
+}
+
+.container .row-cords > div{
+    width: 80px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 1.8rem;
 }

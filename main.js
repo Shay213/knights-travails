@@ -1,72 +1,40 @@
-const createBoard = (x,y) => {
-    const run = (a, b) => {
-        if(a === x) return [];
-        if(b === y-1) return [[a,b], ...run(a+1, 0)];
+const knightTour = start => {
+    const board = Array.from({length: 8}, () => Array.from({length: 8}, () => 0));
+    const getMoves = ([x, y]) => [
+        [x - 2, y - 1],
+        [x - 2, y + 1],
+        [x - 1, y - 2],
+        [x - 1, y + 2],
+        [x + 1, y - 2],
+        [x + 1, y + 2],
+        [x + 2, y - 1],
+        [x + 2, y + 1],
+    ];
+    const isValidMove = ([x,y]) => x >= 0 && x < 8 && y >= 0 && y < 8 && board[x][y] === 0;
+    const path = []
 
-        return [[a,b], ...run(a, b+1)];
-    }
-    return run(0,0);
-};
-const sameArr = (a,b) => JSON.stringify(a) === JSON.stringify(b);
-
-class Graph{
-    constructor(board){
-        this.board = board;
-        this.adjacencyList = [];
-    }
-
-    vertexInAdjacencyList(vertex){
-        return this.adjacencyList.some(el => sameArr(el[0], vertex));
-    }
-
-    addVertex(vertex){
-        if(this.adjacencyList.length === 0 || !this.vertexInAdjacencyList(vertex)){
-            this.adjacencyList.push([vertex,[]]);
+    function dfs(start, count=1){
+        path.push(start);
+        const [x,y] = start;
+        board[x][y] = count;
+        if(count === 64){
+            return true;
         }
-    }
-
-    addEdge(source, destination){
-        this.addVertex(source);
-        this.adjacencyList.find(el => sameArr(el[0], source))[1].push(destination);
-    }
-
-    buildGraphFromBoard(){
-        const board = this.board;
-        const moves = ([x,y]) => [
-            [x+2, y-1], [x+2, y+1], [x-2, y+1], [x-2, y-1],
-            [x-1, y+2], [x+1, y+2], [x-1, y-2], [x+1, y-2]
-        ];
-        board.forEach(cord => this.addEdge(cord, moves(cord).filter(move => isInBoard(move))));
-
-        function isInBoard([x,y]){
-            // from 0 
-            const squaresRow = Math.sqrt(board.length)-1; 
-            return (x >= 0 && x <= squaresRow) && (y >= 0 && y <= squaresRow);
-        }
-    }
-    //bfs
-
-    dfs(startNode, destinationNode){
-        const visited = [];
-        const result = [];
-        const adjacencyList = this.adjacencyList;
-        const isVisited = node => visited.find(el => sameArr(node, el)); 
-        (function dfsRecursive(node){   
-            if(!node) return null;
-            visited.push(node);
-            result.push(node);
-            return adjacencyList.forEach(el => {
-                if(sameArr(el[0], node)){
-                    el[1][0].forEach(el2 => {
-                        if(!isVisited(el2))
-                            dfsRecursive(el2);
-                    });
+        
+        const moves = getMoves(start);
+        for(const move of moves){
+            if(isValidMove(move)){
+                if(dfs(move, count + 1)){
+                    return true;
                 }
-            });
-        })(startNode);
-
-        return result;
+            }
+        }
+        path.pop();
+        board[x][y] = 0;
+        return false;
     }
+    dfs(start);
+    return path;
 };
 
 const createHTMLBoard = size => {
@@ -82,7 +50,60 @@ const createHTMLBoard = size => {
     }
 };
 
+const knightMoves = start => {
+    const path = knightTour(start);
+    const [...squares] = document.querySelectorAll('.board > div');
+    const sameArr = (a,b) => JSON.stringify(a) === JSON.stringify(b);
+    const findSquare = arr => squares.find(square => sameArr(square.dataset.cords.split(',').map(el => +el), arr));
+    animate();
+    function animate(length = 1){
+        if(length === path.length) return;
+        
+        const square = findSquare(path[length]);
 
+        //setTimeout(() => animate(++length),500);
+    }
+}
+
+const gameFlow = () => {
+    const squares = document.querySelectorAll('.board > div');
+    const buttons = document.querySelectorAll('.container > div > button');
+    let counter = 0;
+    let start = null; 
+    let destination = null;
+
+    buttons.forEach(button => button.addEventListener('click', chooseAlg));
+
+    function chooseAlg(e){
+        if(e.target.dataset.id === '1'){
+            buttons[0].classList.add('active');
+            buttons[1].classList.remove('active');
+        }else{
+            buttons[1].classList.add('active');
+            buttons[0].classList.remove('active');
+        }
+    }
+
+    squares.forEach(square => square.addEventListener('click', squareChosen));
+
+    function squareChosen(e){
+        if(counter === 2) return;
+        const choice = e.target.dataset.cords.split(',').map(el => +el);
+        counter === 0 ? start = choice : destination = choice;
+
+        if(start && destination){
+            knightMoves(start, destination);
+
+            // reset
+            /*counter = 0;
+            start = null;
+            destination = null;
+            startSquareText.textContent = `Start: `;
+            destinationSquareText.textContent = `Destination: `;*/
+        }
+        counter++;
+    }
+};
 
 const init = (() => {
     createHTMLBoard(64);
