@@ -51,6 +51,7 @@ body{
 
 .board > div{
     cursor: pointer;
+    outline: 1px solid #7c7c7c;
 }
 
 .container .flex-container{
