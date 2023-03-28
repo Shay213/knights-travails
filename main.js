@@ -55,13 +55,35 @@ const knightMoves = start => {
     const [...squares] = document.querySelectorAll('.board > div');
     const sameArr = (a,b) => JSON.stringify(a) === JSON.stringify(b);
     const findSquare = arr => squares.find(square => sameArr(square.dataset.cords.split(',').map(el => +el), arr));
+
+    let prevSquare = findSquare(start);
     animate();
     function animate(length = 1){
         if(length === path.length) return;
         
         const square = findSquare(path[length]);
+        createNewLine(prevSquare, square);
+        prevSquare = square;
 
-        //setTimeout(() => animate(++length),500);
+        setTimeout(() => animate(++length),500);
+    }
+
+    function createNewLine(start, end){
+        const board = document.querySelector('.board');
+        const line = document.createElement('div');
+        line.classList.add('line');
+        const startX = start.offsetLeft + (start.offsetWidth / 2);
+        const startY = start.offsetTop + (start.offsetHeight / 2);
+        const endX = end.offsetLeft + (end.offsetWidth / 2);
+        const endY = end.offsetTop + (end.offsetHeight / 2);
+        const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+        line.style.width = length + 'px';
+        line.style.transform = `rotate(${angle}deg)`;
+        line.style.top = startY + 'px';
+        line.style.left = startX + 'px';
+        board.appendChild(line);
     }
 }
 

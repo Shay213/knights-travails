@@ -49,14 +49,6 @@ body{
     position: relative;
 }
 
-.board .line{
-    width: 80px; 
-    height: 10px; 
-    background-color: yellow;
-    position: absolute;
-    transform-origin: top left;
-}
-
 .board > div{
     cursor: pointer;
 }
@@ -89,4 +81,20 @@ body{
     align-items: center;
     color: #fff;
     font-size: 1.8rem;
+}
+
+.line{
+    width: 80px;
+    height: 3px;
+    background-color: black;
+    position: absolute;
+    transform-origin: bottom left;
+}
+.line::after{
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: calc(100% - 5px);
+    border: 5px solid transparent;
+    border-left: 10px solid black;
 }
