@@ -55,7 +55,36 @@ const Knight = (start, destination=null) => {
         return dfsHelper(start);
     };
 
-    
+    const shortestPath = () => {
+        const queue = [];
+        queue.push(start);
+        const distances = {};
+        distances[start] = 0;
+        const parents = {};
+        const isValidMove = ([x,y]) => x >= 0 && x < 8 && y >= 0 && y < 8;
+        
+        while(queue.length > 0){
+            const current = queue.shift();
+            
+            if(sameArr(current, destination)){
+                const path = [current];
+                while(!sameArr(path[0], start)){
+                    path.unshift(parents[path[0]]);
+                }
+                return path;
+            }
+
+            for(const [dx, dy] of moves){
+                const move = [current[0]+dx, current[1]+dy];
+                if(isValidMove(move) && !(move in distances)){
+                    queue.push(move);
+                    distances[move] = distances[current] + 1;
+                    parents[move] = current;
+                }
+            }
+        }
+        return null;
+    };
 
     return {knightTour, shortestPath};
 };
